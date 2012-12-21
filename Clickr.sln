@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clickr", "Clickr\Clickr.csproj", "{45704548-7528-44C5-801A-63F178C0D23E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickrAPI", "ClickrAPI\ClickrAPI.csproj", "{68BE35EC-584F-45B4-8657-08ABF1432847}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{45704548-7528-44C5-801A-63F178C0D23E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45704548-7528-44C5-801A-63F178C0D23E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45704548-7528-44C5-801A-63F178C0D23E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45704548-7528-44C5-801A-63F178C0D23E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68BE35EC-584F-45B4-8657-08ABF1432847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68BE35EC-584F-45B4-8657-08ABF1432847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68BE35EC-584F-45B4-8657-08ABF1432847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68BE35EC-584F-45B4-8657-08ABF1432847}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
