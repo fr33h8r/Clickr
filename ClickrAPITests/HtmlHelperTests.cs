@@ -1,7 +1,6 @@
 ﻿using System;
 using ClickrAPI;
 using FluentAssertions;
-using HtmlAgilityPack;
 using Xunit;
 using System.Linq;
 
