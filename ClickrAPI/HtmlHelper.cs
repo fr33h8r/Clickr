@@ -40,8 +40,12 @@ namespace ClickrAPI
             hero.Name = name;
             var htmlAttribute = document.DocumentNode.Descendants("a")
                 .SelectMany(a => a.Attributes.Where(b => b.Value.Contains(name))).First();
+            var childNodes = htmlAttribute.OwnerNode.ChildNodes.ToList();
+
             hero.Link = htmlAttribute.Value;
-//            htmlAttribute.OwnerNode.ChildNodes
+            var values = childNodes.SelectMany(c => c.Attributes.Where(a => a.Name == "src")
+                                                     .ToDictionary(n => n.OwnerNode.Attributes.First(b => b.Name == "id").Value, src => src.Value)).ToList();
+            values.ForEach(pair => hero.HeroImage.Add(pair.Key, pair.Value));
             return hero;
         }
     }
@@ -49,7 +53,7 @@ namespace ClickrAPI
     public class Hero
     {
         public Hero() { }
-        public Hero(string name, string link, Image heroImage)
+        public Hero(string name, string link, Dictionary<string, string> heroImage)
         {
             Name = name;
             Link = link;
@@ -58,7 +62,7 @@ namespace ClickrAPI
 
         public string Name { get; set; }
         public string Link { get; set; }
-        public Image HeroImage { get; set; }
+        public Dictionary<string, string> HeroImage { get; set; }
     }
 
     class Program
