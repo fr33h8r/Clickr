@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using ClickrAPI;
 using FluentAssertions;
+using HtmlAgilityPack;
 using Xunit;
 using System.Linq;
+using Xunit.Extensions;
 
 namespace ClickrAPITests
 {
@@ -18,7 +21,6 @@ namespace ClickrAPITests
             var result = helper.GetHeroes();
             //assert
             var list = result.ToList();
-            list.ForEach(Console.Out.WriteLine);
             list.Should().Contain("Tiny");
             list.Count.Should().Be(95);
         }
@@ -49,6 +51,21 @@ namespace ClickrAPITests
             var result = helper.GetUltimateValues("http://www.dota2.com/hero/Earthshaker/");
             //assert
             result.Should().BeEquivalentTo(list);
+        }
+
+        [Theory]
+//        [InlineData("http://www.dota2.com/hero/Earthshaker/")]
+        [InlineData("http://www.dota2.com/hero/Tiny/")]
+        public void should_return_name_of_ability(string address)
+        {
+            var html = new HtmlDocument();
+            html.LoadHtml(new WebClient().DownloadString(address));
+            var htmlNodes = html.DocumentNode.Descendants("div").SelectMany(a =>
+                a.Attributes.Where(b => b.Value.Contains("abilityHeaderRowDescription")).Select(c => c.OwnerNode)).ToList();
+            
+            htmlNodes.ForEach(a => Console.Out.WriteLine(a.Id));
+            
+//            html.DocumentNode.Descendants("h2").Where(a => a.ParentNode.Attributes[0].Value.Contains("ability")).ToList().ForEach(a => Console.Out.WriteLine(a.Name + " -> " + a.InnerText));
         }
     }
 }
