@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
 using ClickrAPI;
 using FluentAssertions;
 using Xunit;
@@ -8,28 +11,36 @@ namespace ClickrAPITests
 {
     public class HtmlHelperTests
     {
+        readonly HtmlHelper helper = new HtmlHelper();
+
         [Fact]
         public void should_get_list_of_heroes()
         {
-            //arrange
-            var helper = new HtmlHelper();
             //act
-            var result = helper.GetHeroesNames();
+            var result = helper.GetHeroes();
             //assert
-            result.ToList().Should().Contain("TINY");
+            var list = result.ToList();
+            list.ForEach(Console.Out.WriteLine);
+            list.Should().Contain("Tiny");
+            list.Count.Should().Be(95);
         }
 
         [Fact]
         public void should_get_heroes_attributes()
         {
-            //arrange
-            var helper = new HtmlHelper();
             //act
-            var result = helper.GetHeroesAttributes();
+            var result = helper.GetHeroesNodes();
             //assert
-            result.ToList().ForEach(a => a.Attributes.ToList().ForEach(b => Console.WriteLine(b.Name + " -> " + b.Value)));
-
             result.ToList().Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void should_show_hero_info()
+        {
+            //act
+            var hero = helper.GetHeroInfo("Earthshaker");
+            //assert
+            hero.Link.Should().Be("http://www.dota2.com/hero/Earthshaker/");
         }
     }
 }
