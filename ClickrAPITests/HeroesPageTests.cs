@@ -10,15 +10,22 @@ using Xunit.Extensions;
 
 namespace ClickrAPITests
 {
-    public class HtmlHelperTests
+    public class HeroesPageTests
     {
-        readonly HtmlHelper helper = new HtmlHelper();
+        readonly HeroesPage helper = new HeroesPage();
+
+        [Fact]
+        public void should_return_all_values_of_attribute_in_node()
+        {
+            //act
+//            var result = helper.GetNodesByAttributeValue()
+        }
 
         [Fact]
         public void should_get_list_of_heroes()
         {
             //act
-            var result = helper.GetHeroes();
+            var result = helper.GetListHeroesNames();
             //assert
             var list = result.ToList();
             list.Should().Contain("Tiny");
@@ -32,25 +39,6 @@ namespace ClickrAPITests
             var result = helper.GetHeroesNodes();
             //assert
             result.ToList().Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void should_show_hero_info()
-        {
-            //act
-            var hero = helper.GetHeroInfo("Earthshaker");
-            //assert
-            hero.Link.Should().Be("http://www.dota2.com/hero/Earthshaker/");
-        }
-
-        [Fact]
-        public void should_return_hero_ultimate_string()
-        {
-            var list = new List<int> {150, 130, 110};
-            //act
-            var result = helper.GetUltimateValues("http://www.dota2.com/hero/Earthshaker/");
-            //assert
-            result.Should().BeEquivalentTo(list);
         }
 
         [Theory]

@@ -8,12 +8,13 @@ using ClickrAPI;
 
 namespace DotaClickr
 {
-    public partial class Form1 : Form
+    public partial class Dota2Clickr : Form
     {
-        private readonly List<DotaHero> heroes = new List<DotaHero>();
-        public Form1()
+        private readonly List<DotaHero> heroes;
+        public Dota2Clickr()
         {
             InitializeComponent();
+            heroes = new List<DotaHero>();
         }
 
         private void button_Click(object sender, EventArgs e)
@@ -23,24 +24,23 @@ namespace DotaClickr
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var helper = new HtmlHelper();
+            var heroesPage = new HeroesPage();
+            var heroLinks = heroesPage.GetListHeroesLinks().ToList();
+
             foreach (var comboBox in Controls.OfType<ComboBox>())
             {
-                var heroNames = helper.GetHeroes().ToList();
-                heroNames.ForEach(name =>
+                heroLinks.ForEach(link =>
                                        {
+                                           var name = HtmlHelper.GetNameFromLink(link);
+                                           heroes.Add(new DotaHero { Name = name, Link = link });
                                            comboBox.Items.Add(name);
-                                           heroes.Add(helper.GetHeroInfo(name));
                                        });
             }
         }
 
         private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
-            var helper = new HtmlHelper();
             var comboBox = (ComboBox) sender;
-            helper.GetHeroInfo(comboBox.Text);
 
             var comboName = comboBox.Name[comboBox.Name.Length - 1];
 
@@ -49,7 +49,7 @@ namespace DotaClickr
                 foreach (var dotaHero in heroes)
                 {
                     if(dotaHero.Name == comboBox.Text)
-                        button.Image = dotaHero.Img;
+                        button.Text = dotaHero.GetImage(dotaHero.Name);
                 }
             }
         }

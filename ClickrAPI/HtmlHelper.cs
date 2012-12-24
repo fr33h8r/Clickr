@@ -1,80 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Net;
 using HtmlAgilityPack;
 
 namespace ClickrAPI
 {
-    public class HtmlHelper
+    public static class HtmlHelper
     {
-        private const string listHeroesAddress = "http://www.dota2.com/heroes/";
-        private HtmlDocument document { get; set; }
+        public static readonly Func<HtmlDocument, string, List<HtmlNode>> Descendants =
+            (html, s) => html.DocumentNode.Descendants(s).ToList();
 
-        public HtmlHelper()
+        public static IEnumerable<HtmlAttribute> GetNodesByAttributeValue(HtmlDocument html, string node, string valueOfAttribute)
         {
-            document = new HtmlDocument();
-            document.LoadHtml(new WebClient().DownloadString(listHeroesAddress));
+            return Descendants(html, node)
+                .SelectMany(a => a.Attributes
+                    .Where(b => b.Value.Contains(valueOfAttribute)))
+                    .ToList();
         }
 
-        public IEnumerable<HtmlNode> GetHeroesNodes()
+        public static string GetNameFromLink(string link)
         {
-            return document.DocumentNode.Descendants("a")
-                           .SelectMany(a => a.Attributes.Where(b => b.Value.Contains("link_")).Select(b => b.OwnerNode));
-        }
-
-        public IEnumerable<string> GetHeroes()
-        {
-            return document.DocumentNode.Descendants("a")
-                           .SelectMany(a => a.Attributes
-                               .Where(b => b.Value.Contains("/hero/"))
-                               .Select(b => b.Value.Split('/')
-                                   .Last(c => !string.IsNullOrEmpty(c))));
-        }
-
-        public List<int> GetUltimateValues(string address)
-        {
-            var html = new HtmlDocument();
-            html.LoadHtml(new WebClient().DownloadString(address));
-
-            var attributes = html.DocumentNode.Descendants("div")
-                                 .SelectMany(a => a.Attributes.Where(b => b.Value == "cooldown")).ToList();
-
-            return attributes.SelectMany(a =>
-                a.OwnerNode.InnerText.Split(':').Select(b => b.Trim()).ToList())
-                    .Last().Split('/').Select(int.Parse).Where(c => c > 15).ToList();
-        }
-
-        public DotaHero GetHeroInfo(string name)
-        {
-            var hero = new DotaHero { Name = name };
-            var htmlAttribute = document.DocumentNode.Descendants("a")
-                .SelectMany(a => a.Attributes.Where(b => b.Value.Contains(name))).First();
-            var childNodes = htmlAttribute.OwnerNode.ChildNodes.ToList();
-
-            hero.Link = htmlAttribute.Value;
-            var values = childNodes.SelectMany(c => c.Attributes.Where(a => a.Name == "src").ToList()).ToList();
-
-            values.ForEach(pair =>
-                               {
-                                   if (!pair.OwnerNode.Attributes.First(a => a.Name.Contains("id"))
-                                            .Value.Contains("hover")) return;
-
-                                   var stream = new WebClient().OpenRead(pair.Value);
-                                   hero.Img = Image.FromStream(stream);
-                               });
-
-            hero.Ultimate = GetUltimateValues(hero.Link);
-            return hero;
-        }
-    }
-
-    class Program
-    {
-        static void Main()
-        {
-            Console.ReadLine();
+            return link.Split('/').Last(c => !string.IsNullOrEmpty(c));
         }
     }
 }

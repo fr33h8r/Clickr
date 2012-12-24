@@ -1,6 +1,6 @@
 ﻿namespace DotaClickr
 {
-    partial class Form1
+    partial class Dota2Clickr
     {
         /// <summary>
         /// Required designer variable.
