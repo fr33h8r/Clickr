@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Windows.Forms;
 using ClickrAPI;
 
@@ -11,9 +9,11 @@ namespace DotaClickr
     public partial class Dota2Clickr : Form
     {
         private readonly List<DotaHero> heroes;
+        private readonly HeroesPage heroesPage;
         public Dota2Clickr()
         {
             InitializeComponent();
+            heroesPage = new HeroesPage();
             heroes = new List<DotaHero>();
         }
 
@@ -24,15 +24,20 @@ namespace DotaClickr
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var heroesPage = new HeroesPage();
             var heroLinks = heroesPage.GetListHeroesLinks().ToList();
+            heroLinks.Sort();
 
             foreach (var comboBox in Controls.OfType<ComboBox>())
             {
                 heroLinks.ForEach(link =>
                                        {
                                            var name = HtmlHelper.GetNameFromLink(link);
-                                           heroes.Add(new DotaHero { Name = name, Link = link });
+                                           heroes.Add(new DotaHero
+                                                          {
+                                                              Name = name,
+                                                              Link = link,
+                                                              ImgLink = heroesPage.GetHeroImageLink(name)
+                                                          });
                                            comboBox.Items.Add(name);
                                        });
             }
@@ -44,12 +49,11 @@ namespace DotaClickr
 
             var comboName = comboBox.Name[comboBox.Name.Length - 1];
 
-            foreach (var button in Controls.OfType<Button>().Where(button => button.Name.Contains(comboName.ToString())))
+            foreach (var button in Controls.OfType<Button>().Where(button => button.Name.Contains(comboName.ToString())).ToList())
             {
-                foreach (var dotaHero in heroes)
+                foreach (var dotaHero in heroes.Where(dotaHero => dotaHero.Name == comboBox.Text).ToList())
                 {
-                    if(dotaHero.Name == comboBox.Text)
-                        button.Text = dotaHero.GetImage(dotaHero.Name);
+                    button.Image = HtmlHelper.GetImage(dotaHero.ImgLink);
                 }
             }
         }

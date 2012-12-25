@@ -11,33 +11,44 @@ namespace ClickrAPITests
 {
     public class HeroesPageTests
     {
-        readonly HeroesPage helper = new HeroesPage();
+        readonly HeroesPage page = new HeroesPage();
 
         [Fact]
-        public void should_return_all_values_of_attribute_in_node()
+        public void should_return_list_of_hero_links()
         {
             //act
-//            var result = helper.GetNodesByAttributeValue()
-        }
-
-        [Fact]
-        public void should_get_list_of_heroes()
-        {
-//            //act
-//            var result = helper.GetListHeroesNames();
-//            //assert
-//            var list = result.ToList();
-//            list.Should().Contain("Tiny");
-//            list.Count.Should().Be(95);
-        }
-
-        [Fact]
-        public void should_get_heroes_attributes()
-        {
-            //act
-            var result = helper.GetHeroesNodes();
+            var result = page.GetListHeroesLinks();
             //assert
-            result.ToList().Should().NotBeEmpty();
+            result.Should().Contain("http://www.dota2.com/hero/Sven/");
+        }
+
+        [Fact]
+        public void should_return_one_hero_node()
+        {
+            //act
+            var result = page.GetOneHeroNode("Clockwerk");
+            //assert
+            result.Attributes.ToList().ForEach(attr => Console.Out.WriteLine(attr.Name + " -> " + attr.Value));
+        }
+
+        [Fact]
+        public void should_return_list_of_heroes_nodes()
+        {
+            //act
+            var result = page.GetListHeroesNodes();
+            //assert
+            result.Should().NotBeEmpty();
+        }
+
+        [Theory]
+        [InlineData("Bloodseeker", "http://media.steampowered.com/apps/dota2/images/heroes/bloodseeker_hphover.png")]
+        [InlineData("Clockwerk", "http://media.steampowered.com/apps/dota2/images/heroes/rattletrap_hphover.png")]
+        public void should_return_list_of_hero_image_links(string name, string expected)
+        {
+            //act
+            var result = page.GetHeroImageLink(name);
+            //assert
+            result.Should().Be(expected);
         }
 
         [Theory]

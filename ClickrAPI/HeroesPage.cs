@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using HtmlAgilityPack;
@@ -18,46 +20,38 @@ namespace ClickrAPI
             html.LoadHtml(new WebClient().DownloadString(listHeroesAddress));
         }
 
-        public string GetHeroImage(string name)
+        public string GetHeroImageLink(string name)
         {
-            var hero = new DotaHero { Name = name };
-            var htmlAttribute = HtmlHelper.GetNodesByAttributeValue(html, "a", name).First();
-
-            return htmlAttribute.Value;
-
-            //            var childNodes = htmlAttribute.OwnerNode.ChildNodes.ToList();
-            //            var values = childNodes.SelectMany(c => c.Attributes.Where(a => a.Name == "src").ToList()).ToList();
-
-            //            values.ForEach(pair =>
-            //            {
-            //                if (!pair.OwnerNode.Attributes.First(a => a.Name.Contains("id"))
-            //                         .Value.Contains("hover")) return;
-            //
-            //                var stream = new WebClient().OpenRead(pair.Value);
-            //                hero.Img = Image.FromStream(stream);
-            //            });
-
-            //            hero.Ultimate = GetUltimateValues(hero.Link);
+            var childNodes = GetOneHeroNode(name).ChildNodes.ToList();
+            var listOfLinkAttributes = childNodes.Select(node => 
+                node.Attributes.Where(attr => 
+                    attr.Value.Contains("hphover")))
+                    .ToList();
+            return listOfLinkAttributes.SelectMany(a => a.Select(b => b.Value)).First();
         }
 
-
-        public IEnumerable<HtmlNode> GetHeroesNodes()
+        public HtmlNode GetOneHeroNode(string name)
         {
-            return GetAttributes("a", "link_")
+            return GetAttributes("a", name).Last().OwnerNode;
+        }
+
+        public List<HtmlNode> GetListHeroesNodes()
+        {
+            return GetAttributes("a", "/hero/")
                 .Select(attribute => attribute.OwnerNode)
                 .ToList();
         }
 
-        public IEnumerable<string> GetListHeroesLinks()
+        public List<string> GetListHeroesLinks()
         {
             return GetAttributes("a", "/hero/")
                 .Select(attribute => attribute.Value)
                 .ToList();
         }
 
-        public IEnumerable<HtmlAttribute> GetAttributes(string node, string value)
+        public List<HtmlAttribute> GetAttributes(string node, string value)
         {
-            return HtmlHelper.GetNodesByAttributeValue(html, node, value);
+            return HtmlHelper.GetNodesByAttributeValue(html, node, value).ToList();
         }
     }
 }
