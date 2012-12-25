@@ -18,6 +18,29 @@ namespace ClickrAPI
             html.LoadHtml(new WebClient().DownloadString(listHeroesAddress));
         }
 
+        public string GetHeroImage(string name)
+        {
+            var hero = new DotaHero { Name = name };
+            var htmlAttribute = HtmlHelper.GetNodesByAttributeValue(html, "a", name).First();
+
+            return htmlAttribute.Value;
+
+            //            var childNodes = htmlAttribute.OwnerNode.ChildNodes.ToList();
+            //            var values = childNodes.SelectMany(c => c.Attributes.Where(a => a.Name == "src").ToList()).ToList();
+
+            //            values.ForEach(pair =>
+            //            {
+            //                if (!pair.OwnerNode.Attributes.First(a => a.Name.Contains("id"))
+            //                         .Value.Contains("hover")) return;
+            //
+            //                var stream = new WebClient().OpenRead(pair.Value);
+            //                hero.Img = Image.FromStream(stream);
+            //            });
+
+            //            hero.Ultimate = GetUltimateValues(hero.Link);
+        }
+
+
         public IEnumerable<HtmlNode> GetHeroesNodes()
         {
             return GetAttributes("a", "link_")

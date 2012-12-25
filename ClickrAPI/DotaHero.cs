@@ -59,6 +59,5 @@ namespace ClickrAPI
 
 //            hero.Ultimate = GetUltimateValues(hero.Link);
         }
-
     }
 }
