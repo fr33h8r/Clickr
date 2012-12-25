@@ -20,14 +20,21 @@ namespace ClickrAPI
 
         public IEnumerable<HtmlNode> GetHeroesNodes()
         {
-            return HtmlHelper.GetNodesByAttributeValue(html, "a", "link_")
-                .Select(b => b.OwnerNode).ToList();
+            return GetAttributes("a", "link_")
+                .Select(attribute => attribute.OwnerNode)
+                .ToList();
         }
 
         public IEnumerable<string> GetListHeroesLinks()
         {
-            return HtmlHelper.GetNodesByAttributeValue(html, "a", "/hero/")
-                .Select(a => a.Value).ToList();
+            return GetAttributes("a", "/hero/")
+                .Select(attribute => attribute.Value)
+                .ToList();
+        }
+
+        public IEnumerable<HtmlAttribute> GetAttributes(string node, string value)
+        {
+            return HtmlHelper.GetNodesByAttributeValue(html, node, value);
         }
     }
 }
