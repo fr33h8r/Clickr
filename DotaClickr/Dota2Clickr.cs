@@ -8,13 +8,32 @@ namespace DotaClickr
 {
     public partial class Dota2Clickr : Form
     {
-        private readonly List<DotaHero> heroes;
-        private readonly HeroesPage heroesPage;
+        private Dictionary<string, DotaHero> heroes;
+        private HeroesPage heroesPage;
+        private List<string> heroLinks;
+
         public Dota2Clickr()
         {
             InitializeComponent();
+            InitializeHeroes();
+        }
+
+        private void InitializeHeroes()
+        {
             heroesPage = new HeroesPage();
-            heroes = new List<DotaHero>();
+            heroes = new Dictionary<string, DotaHero>();
+            heroLinks = heroesPage.GetListHeroesLinks().ToList();
+            heroLinks.Sort();
+            heroLinks.ForEach(link =>
+                                  {
+                                      var name = HtmlHelper.GetNameFromLink(link);
+                                      heroes.Add(name, new DotaHero
+                                                           {
+                                                               Name = name,
+                                                               Link = link,
+                                                               ImgLink = heroesPage.GetHeroImageLink(name)
+                                                           });
+                                  });
         }
 
         private void button_Click(object sender, EventArgs e)
@@ -24,38 +43,31 @@ namespace DotaClickr
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var heroLinks = heroesPage.GetListHeroesLinks().ToList();
-            heroLinks.Sort();
-
-            foreach (var comboBox in Controls.OfType<ComboBox>())
-            {
-                heroLinks.ForEach(link =>
-                                       {
-                                           var name = HtmlHelper.GetNameFromLink(link);
-                                           heroes.Add(new DotaHero
-                                                          {
-                                                              Name = name,
-                                                              Link = link,
-                                                              ImgLink = heroesPage.GetHeroImageLink(name)
-                                                          });
-                                           comboBox.Items.Add(name);
-                                       });
-            }
+            var comboItems = heroes.Select(hero => hero.Value.Name as object).ToArray();
+            Controls.OfType<ComboBox>().ToList()
+                .ForEach(comboBox => comboBox.Items.AddRange(comboItems));
         }
 
         private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var comboBox = (ComboBox) sender;
-
-            var comboName = comboBox.Name[comboBox.Name.Length - 1];
-
-            foreach (var button in Controls.OfType<Button>().Where(button => button.Name.Contains(comboName.ToString())).ToList())
+            
+            foreach (var button in Controls.OfType<Button>().ToList())
             {
-                foreach (var dotaHero in heroes.Where(dotaHero => dotaHero.Name == comboBox.Text).ToList())
-                {
-                    button.Image = HtmlHelper.GetImage(dotaHero.ImgLink);
-                }
+                if (button.Tag == comboBox.Tag)
+                    button.Image = HtmlHelper.GetImage(heroes[comboBox.Text].ImgLink);
+//                    foreach (var dotaHero in heroes.Where(dotaHero => dotaHero.Value.Name == comboBox.Text).ToList())
+//                        button.Image = HtmlHelper.GetImage(dotaHero.Value.ImgLink);
             }
+
+            foreach (var label in Controls.OfType<Label>())
+            {
+                
+            }
+
+//            var tag = button.Tag.ToString();
+//            foreach (var b in Controls.OfType<Button>().Where(b => int.Parse(b.Tag.ToString()) == int.Parse(tag) + 5))
+//                b.Text = string.Join("/", dotaHero.GetUltimateValues());
         }
     }
 }

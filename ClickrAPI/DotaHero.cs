@@ -13,10 +13,10 @@ namespace ClickrAPI
         public string ImgLink { get; set; }
         public List<int> Ultimate { get; set; }
 
-        public List<int> GetUltimateValues(string address)
+        public List<int> GetUltimateValues()
         {
             var html = new HtmlDocument();
-            html.LoadHtml(new WebClient().DownloadString(address));
+            html.LoadHtml(new WebClient().DownloadString(Link));
 
             var attributes = HtmlHelper.GetNodesByAttributeValue(html, "div", "cooldown");
 
